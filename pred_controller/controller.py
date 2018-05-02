@@ -10,13 +10,12 @@ import numpy as np
 import pickle
 from sklearn import datasets, svm
 
-
-filename = 'svm_model.sav'
+filename = 'rf_model.sav'
 load_model = pickle.load(open(filename,'rb'))
 gamma = 0.9
 # example
 # features: temperature_normal, humidity_normal, skin_normal, clothing
-test = np.array([[-1.785714,-0.457604,-2.04924,21.7]])
+test = np.array([[0.784,23,61,27.55,81.55,1.00]])
 pred = load_model.predict(test)
 states = np.arange(18,25,0.5)
 nS = len(states)
@@ -33,29 +32,30 @@ def value_iteration(test, gamma, tol=1e-3):
             value = np.zeros(nA)
             for act in range(nA):
                 inputs = test
-                inputs[0] = states[i]
+                inputs[0] = inputs[0]+Action[act]
                 pred = load_model.predict(inputs)
                 if pred == -3:
-                    value[act] = value[act] - 10
-                elif pred == -2:
                     value[act] = value[act] - 5
+                elif pred == -2:
+                    value[act] = value[act] - 2
                 elif pred == -1:
                     value[act] = value[act] - 1
                 elif pred == 0:
-                    value[act] = value[act] + 10
+                    value[act] = value[act] + 1
                 elif pred == 1:
                     value[act] = value[act] - 1
                 elif pred == 2:
-                    value[act] = value[act] - 5
+                    value[act] = value[act] - 2
                 elif pred == 3:
-                    value[act] = value[act] - 10  
+                    value[act] = value[act] - 5 
             max_value = max(value)
             policy[i] = max([act for act, vl in enumerate(value) if vl == max_value])
             delta = max(delta, abs(max_value-value_current[i]))
             v[i] = max_value
         if delta < tol:
             break
-    return policy
+    return policy, v
 
-policy = value_iteration(test, gamma, tol=1e-3)
+policy, v = value_iteration(test, gamma, tol=1e-3)
 print(policy)
+print(v)
