@@ -16,9 +16,11 @@ gamma = 0.9
 # features: temperature_normal, humidity_normal, skin_normal, clothing
 test = np.array([[0.784,20,61,27.55,81.55,1.00]])
 pred = load_model.predict(test)
+# state space of temperature 
 states = np.arange(18,25,0.3)
 nS = len(states)
-Action = [-0.5,0,0.5]
+# increase or decrease temperature
+Action = [-0.01,0,0.01]
 nA = len(Action)
 
 def value_iteration(test, gamma, tol=1e-3):
