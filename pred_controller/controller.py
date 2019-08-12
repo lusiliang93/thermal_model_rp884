@@ -29,12 +29,12 @@ def value_iteration(test, gamma, tol=1e-3):
     while True:
         delta = float(0)
         value_current = list(v)
-        print(value_current)
         value = np.zeros(nA)
         for act in range(nA):
             inputs = test
             inputs[0] = inputs[0]+Action[act]
             pred = load_model.predict(inputs)
+            print(pred)
             if pred == -3:
                 value[act] = value[act] - 5
             elif pred == -2:
@@ -50,9 +50,8 @@ def value_iteration(test, gamma, tol=1e-3):
             elif pred == 3:
                 value[act] = value[act] - 5 
             max_value = max(value)
+            # correct???
             policy = max([act for act, vl in enumerate(value) if vl == max_value])
-            print(policy)
-            print(max_value)
             delta = max(delta, abs(max_value-value_current))
             v = max_value
         if delta < tol:
@@ -60,3 +59,4 @@ def value_iteration(test, gamma, tol=1e-3):
     return policy, v
 
 policy, v = value_iteration(test, gamma, tol=1e-3)
+print(v)
